@@ -10,59 +10,65 @@ import java.text.DecimalFormat;
 import java.util.StringTokenizer;
 import org.json.simple.JSONObject;
 
-public class ReadFile {
-	static BufferedReader br = null;
-		public static void main(String[] args) {
+public class CPUJson {
+	public static void main(String[] args) {
 		DecimalFormat df=new DecimalFormat("#0.00");
 		double sum=0;
 		double avg=0;
 		double max=0;
-		int i=0;
-		
-	Connection myConn = null;
-    	Statement myStmt = null;
-    	ResultSet myRs = null;
-    	
-	try {
-		JSONObject obj = new JSONObject();
-    		myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/project", "project" , "project");
-		 myStmt = myConn.createStatement();
-    		PreparedStatement pStmt = myConn.prepareStatement("INSERT into analysis (transactionname, average, maximum) values(?,?,?)");
-  	
+		String val="";
 		String line;
-		br = new BufferedReader(new FileReader("C:\\Users\\hi\\Desktop\\New folder\\hackathon_project-master\\sample-input.txt"));
-		while ((line = br.readLine()) != null) {
-		StringTokenizer stringTokenizer = new StringTokenizer(line," ");
-		pStmt.setString(1,"Transaction1");
-		while (stringTokenizer.hasMoreElements()) {
-			int counter=0;
-			while(counter<8) {
-				stringTokenizer.nextElement().toString();
-				counter++;
+		int i=0;
+		static BufferedReader br = null;	
+		Connection myConn = null;
+    		Statement myStmt = null;
+    		ResultSet myRs = null;
+    	
+		try {
+			JSONObject obj = new JSONObject();
+    			myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/project", "project" , "project");
+			 myStmt = myConn.createStatement();
+    			PreparedStatement pStmt = myConn.prepareStatement("INSERT into analysis (transactionname, average, maximum) values(?,?,?)");
+
+	    		StringBuilder sb = new StringBuilder();
+			
+			br = new BufferedReader(new FileReader("C:\\Users\\hi\\Desktop\\New folder\\hackathon_project-master\\sample-input.txt"));
+			while ((line = br.readLine()) != null) {
+				final StringTokenizer tok = new StringTokenizer(line, " ", false);
+					for(int j=0;j<=11;j++)
+					{
+						if(j==8)
+						{
+							Double CPUvalue = Double.parseDouble(tok.nextElement().toString());
+							if(max<CPUvalue)
+								max=CPUvalue;
+							sum+=CPUvalue;
+							i++;
+							val="\""+i+"s\": ";
+							sb.append(val).append(CPUvalue+",").append("\n");
+						}
+						else
+						{
+							tok.nextToken();
+						}
+					}
+					
+				pStmt.setString(1,"Transaction1");				
+				
 			}
 			
-		Double CPUvalue = Double.parseDouble(stringTokenizer.nextElement().toString());
-		if(max<CPUvalue)
-			max=CPUvalue;
-		sum+=CPUvalue;				
-		while(counter<11) {
-			stringTokenizer.nextElement().toString();
-			counter++;
-			}
-			i++;
-			String val=i+"s";
-			obj.put(val, CPUvalue);			
-		}
-	}
-		avg=(double)sum/(double)i;
-		System.out.println("Transaction 1");
-		System.out.println(obj);
-		System.out.println("Avg: "+df.format(avg));
-		System.out.println("Max: "+max);
-		pStmt.setString(2,df.format(avg));
-		pStmt.setDouble(3,max);
-		 pStmt.execute();
-		
+			avg=(double)sum/(double)i;
+
+			obj.put("Transaction 1",sb);
+			obj.put("CpuAvg:",df.format(avg));
+			obj.put("CpuMax:",max);
+			System.out.println(obj);
+			
+			pStmt.setString(2,df.format(avg));
+			pStmt.setDouble(3,max);
+			pStmt.execute();
+			 
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -74,6 +80,8 @@ public class ReadFile {
 				ex.printStackTrace();
 			}
 		}
+		
 	}
 	
+
 }
