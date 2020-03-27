@@ -21,18 +21,18 @@ public class Memory {
 	public void DatabaseConnectivity()
 	{
 		try {
-			Connection myConn = null;
+		Connection myConn = null;
 	    	Statement myStmt = null;
 	    	ResultSet myRs = null;
 		
 	    	myConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/memory", "memory" , "memory");
-			myStmt = myConn.createStatement();
-			PreparedStatement pStmt = myConn.prepareStatement("INSERT into cpumemory (transactionname, average, maximum) values(?,?,?)");
+		myStmt = myConn.createStatement();
+		PreparedStatement pStmt = myConn.prepareStatement("INSERT into cpumemory (transactionname, average, maximum) values(?,?,?)");
 	
-			pStmt.setString(1,"Sample 1");
-			pStmt.setFloat(2,avg);
-			pStmt.setFloat(3,max);
-			pStmt.execute();
+		pStmt.setString(1,"Sample 1");
+		pStmt.setFloat(2,avg);
+		pStmt.setFloat(3,max);
+		pStmt.execute();
 		}
 
 		catch (Exception e) {
@@ -87,8 +87,7 @@ public class Memory {
 			System.out.println(obj1);
 			mem.DatabaseConnectivity();
 			mem.FileWriter();
-				
-								
+									
 		}
-		
+	
 }
